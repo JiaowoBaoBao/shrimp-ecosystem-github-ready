@@ -1,0 +1,29 @@
+{
+  "replayStatus": "PASS",
+  "missingRows": 0,
+  "replayIssues": [],
+  "replayCheckedAt": "2026-03-20T10:52:38.680Z",
+  "replayLedgers": {
+    "decision_ledger": {
+      "exists": true,
+      "rows": 223,
+      "parseErrors": 0,
+      "latestTs": "2026-03-20T10:52:38.673Z",
+      "latestType": "ROUND"
+    },
+    "execution_ledger": {
+      "exists": true,
+      "rows": 131,
+      "parseErrors": 0,
+      "latestTs": "2026-03-20T10:52:38.673Z",
+      "latestType": "ORDER_PLAN"
+    },
+    "evolution_ledger": {
+      "exists": true,
+      "rows": 24,
+      "parseErrors": 0,
+      "latestTs": "2026-03-20T08:00:23.103Z",
+      "latestType": "EVOLUTION_TICK"
+    }
+  }
+}

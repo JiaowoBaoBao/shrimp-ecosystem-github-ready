@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-03-20T10:53:11.608Z",
+  "note": "sanitized sample for GitHub publication",
+  "runner": {
+    "buildHash": "a5f9f95",
+    "node": "v24.14.0",
+    "updatedAt": "2026-03-20T10:52:38.685Z"
+  },
+  "recentTasks": [
+    {
+      "status": null,
+      "startedAt": null,
+      "endedAt": null,
+      "durationMs": 3925,
+      "code": null
+    },
+    {
+      "status": null,
+      "startedAt": null,
+      "endedAt": null,
+      "durationMs": 39,
+      "code": null
+    },
+    {
+      "status": null,
+      "startedAt": null,
+      "endedAt": null,
+      "durationMs": 3822,
+      "code": null
+    },
+    {
+      "status": null,
+      "startedAt": null,
+      "endedAt": null,
+      "durationMs": 38,
+      "code": null
+    },
+    {
+      "status": null,
+      "startedAt": null,
+      "endedAt": null,
+      "durationMs": 4431,
+      "code": null
+    },
+    {
+      "status": null,
+      "startedAt": null,
+      "endedAt": null,
+      "durationMs": 38,
+      "code": null
+    },
+    {
+      "status": null,
+      "startedAt": null,
+      "endedAt": null,
+      "durationMs": 4565,
+      "code": null
+    },
+    {
+      "status": null,
+      "startedAt": null,
+      "endedAt": null,
+      "durationMs": 36,
+      "code": null
+    }
+  ]
+}
