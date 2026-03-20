@@ -1,0 +1,1478 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>虾系生态进化场</title>
+  <style>
+    :root { --bg:#0b1020; --card:#141c33; --text:#ecf0ff; --muted:#a9b4d0; --ok:#36d399; --warn:#fbbf24; --bad:#f87171; --line:#2a355d; }
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC",sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+    .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+    .k{font-size:12px;color:var(--muted)} .v{font-size:24px;font-weight:700;margin-top:4px}
+    button{appearance:none;border:1px solid #3a4c82;background:linear-gradient(180deg,#253965,#1a2a4d);color:#eaf0ff;padding:8px 12px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s ease;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+    button:hover{transform:translateY(-1px);border-color:#5f82da;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+    button:active{transform:translateY(0);filter:brightness(.96)}
+    button:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-primary{background:linear-gradient(180deg,#2f5fc6,#274fa6);border-color:#6e96ef}
+    .btn-success{background:linear-gradient(180deg,#1f7a59,#186348);border-color:#46b88f}
+    .btn-warn{background:linear-gradient(180deg,#8f6418,#6d4b11);border-color:#d9ad58}
+    .btn-danger{background:linear-gradient(180deg,#8a2e35,#6c2228);border-color:#d57179}
+    .btn-soft{background:linear-gradient(180deg,#30456f,#26385d);border-color:#546a9d}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-top:12px}
+    .tabbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .tab-btn{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:#0f1730;color:var(--muted);cursor:pointer;box-shadow:none}
+    .tab-btn:hover{transform:none;box-shadow:none;border-color:#4d6ec2}
+    .tab-btn.active{background:#1b2a4d;color:var(--text);border-color:#4d6ec2}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+    .is-hidden{display:none !important}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+    .tag{padding:2px 8px;border-radius:999px;font-size:12px}
+    .ACTIVE{background:#173f33;color:#8cf8cd}.WARN{background:#5c4214;color:#ffd78b}.PIP{background:#5a1f25;color:#ffb4bb}
+    .event{font-size:13px;padding:8px 0;border-bottom:1px dashed var(--line)}
+    #eventList.event-scroll{max-height:210px;overflow-y:auto;padding-right:6px}
+    canvas{width:100%;height:220px;background:#0f1730;border:1px solid var(--line);border-radius:8px}
+    .trend-hint{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#0f1730;font-size:12px;color:var(--muted)}
+    .trend-legend{margin-top:8px;font-size:12px;line-height:1.7;color:var(--muted)}
+    .trend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+    .analysis-meta{margin:4px 0 8px 0;font-size:12px;color:var(--muted)}
+    .analysis-scroll{max-height:360px;overflow-y:auto;padding:10px;border:1px solid var(--line);border-radius:8px;background:#0f1730;white-space:pre-wrap;line-height:1.58;font-size:12px;color:var(--text)}
+    .analysis-section{margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed var(--line)}
+    .analysis-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+    .analysis-title{font-size:12px;font-weight:700;color:#d4ddfb;margin-bottom:6px}
+    .analysis-list{margin:0;padding-left:16px}
+    .analysis-list li{margin:4px 0;color:var(--muted)}
+    .analysis-agent-item{border:1px solid var(--line);border-radius:8px;background:#101a35;margin:6px 0}
+    .analysis-agent-item summary{cursor:pointer;list-style:none;padding:8px 10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .analysis-agent-item summary::-webkit-details-marker{display:none}
+    .analysis-agent-item summary::after{content:'▾';margin-left:auto;color:var(--muted)}
+    .analysis-agent-item[open] summary::after{content:'▴'}
+    .analysis-agent-body{padding:0 10px 10px 10px;color:var(--muted);line-height:1.55}
+    .analysis-agent-id{font-weight:700;color:#dbe4ff}
+    .analysis-mini{font-size:11px;color:var(--muted)}
+    .analysis-badge{font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid transparent}
+    .analysis-badge-strong{color:#8cf8cd;background:#173f33;border-color:#2a7a60}
+    .analysis-badge-medium{color:#c4d7ff;background:#1a2a4d;border-color:#365a9c}
+    .analysis-badge-weak{color:#ffd0d0;background:#5a1f25;border-color:#8d2f38}
+    @media (max-width: 960px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h2>🦐 虾系生态看板（Section 17）</h2>
+    <button id="refresh" class="btn-primary">刷新</button>
+  </div>
+
+  <div class="tabbar" id="mainTabs">
+    <button class="tab-btn active" data-tab="overview">总览</button>
+    <button class="tab-btn" data-tab="execution">执行</button>
+    <button class="tab-btn" data-tab="okx">OKX账户</button>
+    <button class="tab-btn" data-tab="evolution">演化</button>
+    <button class="tab-btn" data-tab="memory">记忆/审计</button>
+  </div>
+
+  <div class="card tab-section" data-tab-section="overview" style="margin-bottom:12px">
+    <h3 style="margin-top:0">手动控制台</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <button data-cmd="start" class="btn-success">▶️ 开启引擎</button>
+      <button data-cmd="stop" class="btn-warn">⏸️ 暂停引擎</button>
+      <button data-cmd="shadow" class="btn-soft">🫥 Shadow模式</button>
+      <button data-cmd="demo" class="btn-primary">🧪 Demo模式(自动写单Arm)</button>
+      <button data-cmd="kill_switch" class="btn-danger">🛑 Kill Switch</button>
+      <button data-cmd="arm_write" class="btn-success">🔓 Arm写单</button>
+      <button data-cmd="disarm_write" class="btn-warn">🔒 Disarm写单</button>
+      <button data-cmd="round_tick" class="btn-soft">⚙️ 运行 round_tick</button>
+      <button data-cmd="copilot_brief" class="btn-soft">📰 生成早报</button>
+      <button data-cmd="push_payload" class="btn-soft">📤 生成推送载荷</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input id="cmdInput" placeholder="输入命令，如 evolution_tick" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--line);background:#0f1730;color:var(--text)" />
+      <button id="sendCmd" class="btn-primary">发送命令</button>
+    </div>
+    <div id="cmdResult" class="k" style="margin-top:8px;white-space:pre-wrap"></div>
+  </div>
+
+  <div class="cards tab-section" data-tab-section="overview">
+    <div class="card"><div class="k">Regime</div><div id="regime" class="v">-</div></div>
+    <div class="card"><div class="k">A6 风险等级</div><div id="riskLevel" class="v">-</div></div>
+    <div class="card"><div class="k">日回撤</div><div id="ddDay" class="v">-</div></div>
+    <div class="card"><div class="k">审计状态</div><div id="audit" class="v">-</div></div>
+    <div class="card"><div class="k">引擎状态</div><div id="engineStatus" class="v">-</div></div>
+    <div class="card"><div class="k">运行模式</div><div id="runMode" class="v">-</div></div>
+    <div class="card"><div class="k">写单Arm</div><div id="writeArmStatus" class="v">-</div><div id="writeArmUntil" class="k" style="margin-top:6px">-</div></div>
+    <div class="card">
+      <div class="k">推送状态</div>
+      <div id="pushStatus" class="v">-</div>
+      <div id="pushTs" class="k" style="margin-top:6px">-</div>
+    </div>
+    <div class="card"><div class="k">账户权益</div><div id="equity" class="v">-</div></div>
+    <div class="card"><div class="k">可用余额</div><div id="available" class="v">-</div></div>
+    <div class="card"><div class="k">保证金占用</div><div id="marginUsed" class="v">-</div></div>
+    <div class="card"><div class="k">账户PnL(24h)</div><div id="accountPnl" class="v">-</div><div id="accountSource" class="k" style="margin-top:6px">source: runtime</div></div>
+  </div>
+
+  <div class="grid tab-section" data-tab-section="overview">
+    <div class="card">
+      <h3>DecisionAlpha（14日）</h3>
+      <canvas id="daChart" width="760" height="220"></canvas>
+      <div id="daTrendHint" class="trend-hint">等待 DecisionAlpha 数据…</div>
+      <div class="trend-legend">
+        <div><span class="trend-dot" style="background:#34d399"></span>上行：正向决策优势扩大，实际交易持续优于反事实基线</div>
+        <div><span class="trend-dot" style="background:#f87171"></span>下行：决策优势减弱或转负，建议降风险并复核参数</div>
+        <div><span class="trend-dot" style="background:#60a5fa"></span>横盘：优势不明显，继续积累样本观察稳定性</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>A/B 对照</h3>
+      <table>
+        <thead><tr><th>指标</th><th>Baseline</th><th>Variant</th></tr></thead>
+        <tbody id="abBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid tab-section" data-tab-section="overview">
+    <div class="card">
+      <h3>六席状态机</h3>
+      <table>
+        <thead><tr><th>席位</th><th>角色</th><th>状态</th><th>执行资格</th><th>执行账户</th><th>Score</th><th>DA(24h)</th><th>PnL(24h)</th></tr></thead>
+        <tbody id="seatBody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>风控事件时间线（最近10条）</h3>
+      <div id="eventList" class="event-scroll"></div>
+      <div class="k" style="margin-top:6px">默认展示最新3条高度，可上下滚动查看其余内容</div>
+    </div>
+  </div>
+
+  <div class="grid tab-section" data-tab-section="execution">
+    <div class="card">
+      <h3>执行资格榜（动态 Top5）</h3>
+      <div id="execMeta" class="k" style="margin-bottom:8px">-</div>
+      <table>
+        <thead><tr><th>Rank</th><th>Agent</th><th>Composite</th><th>资格</th><th>账户Profile</th></tr></thead>
+        <tbody id="execBody"></tbody>
+      </table>
+      <div id="execLast" class="event" style="margin-top:8px">-</div>
+    </div>
+    <div class="card">
+      <h3>Agent 当前仓位</h3>
+      <table>
+        <thead><tr><th>Agent</th><th>标的</th><th>方向</th><th>仓位</th><th>开仓价</th><th>现价</th><th>未实现PnL</th></tr></thead>
+        <tbody id="positionBody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>账户权益曲线（近期）</h3>
+      <canvas id="equityChart" width="420" height="220"></canvas>
+      <div id="equityTrendHint" class="trend-hint">等待权益数据…</div>
+      <div class="trend-legend">
+        <div><span class="trend-dot" style="background:#34d399"></span>上行：策略有效，账户净值在扩张</div>
+        <div><span class="trend-dot" style="background:#f87171"></span>下行：回撤扩大，建议降杠杆/收紧风控</div>
+        <div><span class="trend-dot" style="background:#60a5fa"></span>横盘：信号分歧或观望期，等待新趋势</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>账户现状分析</h3>
+      <div id="accountAnalysisMeta" class="analysis-meta">等待分析数据…</div>
+      <div id="accountAnalysis" class="analysis-scroll">加载中…</div>
+      <div class="k" style="margin-top:6px">内容同步于最新推送载荷；区域支持上下滚动。</div>
+    </div>
+  </div>
+
+  <div class="grid tab-section" data-tab-section="okx">
+    <div class="card">
+      <h3>OKX 账户（真实读取）</h3>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <label class="k" for="okxProfile">Profile:</label>
+        <select id="okxProfile" style="padding:6px;border-radius:8px;border:1px solid var(--line);background:#0f1730;color:var(--text)">
+          <option value="demo">demo</option>
+          <option value="live">live</option>
+        </select>
+        <button id="okxRefresh" class="btn-primary">刷新 OKX</button>
+      </div>
+      <div id="okxStatus" class="k" style="margin-bottom:6px">尚未读取</div>
+      <div id="okxSummary" class="event">-</div>
+      <h4 style="margin:10px 0 6px 0">执行子账户汇总（demo_trade）</h4>
+      <div id="okxExecAcctSummary" class="k" style="margin:4px 0 8px 0">-</div>
+      <table>
+        <thead><tr><th>Profile</th><th>权益</th><th>可用</th><th>持仓数</th><th>24h总PnL</th><th>状态</th></tr></thead>
+        <tbody id="okxExecAcctBody"><tr><td colspan="6">-</td></tr></tbody>
+      </table>
+      <h4 style="margin:10px 0 6px 0">资产余额（Top 8）</h4>
+      <table>
+        <thead><tr><th>币种</th><th>权益</th><th>可用</th><th>冻结</th></tr></thead>
+        <tbody id="okxBalanceBody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>OKX 衍生品持仓（Top 12）</h3>
+      <div id="okxDerivSummary" class="k" style="margin:4px 0 8px 0">-</div>
+      <table>
+        <thead><tr><th>标的</th><th>方向</th><th>数量</th><th>均价</th><th>标记价</th><th>未实现PnL</th></tr></thead>
+        <tbody id="okxPosBody"></tbody>
+      </table>
+      <h4 style="margin:12px 0 6px 0">OKX 现货持仓（Top 12）</h4>
+      <div id="okxSpotSummary" class="k" style="margin:4px 0 8px 0">-</div>
+      <table>
+        <thead><tr><th>币种</th><th>数量(权益)</th><th>可用</th><th>估值(USD)</th></tr></thead>
+        <tbody id="okxSpotBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid tab-section" data-tab-section="evolution">
+    <div class="card">
+      <h3>分赛道冠军</h3>
+      <table>
+        <thead><tr><th>赛道</th><th>冠军</th><th>Score</th></tr></thead>
+        <tbody id="champBody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>语义基因突变记录</h3>
+      <div id="mutationList"></div>
+    </div>
+  </div>
+
+  <div class="grid tab-section" data-tab-section="evolution">
+    <div class="card">
+      <h3>Agent 诞生/淘汰谱系树（点击节点看详情）</h3>
+      <svg id="lineageSvg" viewBox="0 0 760 260" style="width:100%;height:260px;background:#0f1730;border:1px solid var(--line);border-radius:8px"></svg>
+      <div id="lineageDetail" class="event" style="margin-top:8px;min-height:48px">点击谱系节点查看该 Agent 的诞生/淘汰/突变摘要</div>
+    </div>
+    <div class="card">
+      <h3>演化时间轴（事件流）</h3>
+      <svg id="timelineSvg" viewBox="0 0 420 260" style="width:100%;height:260px;background:#0f1730;border:1px solid var(--line);border-radius:8px"></svg>
+      <div id="timelineHoverDetail" class="k" style="margin-top:8px;line-height:1.45">悬停节点查看完整时间/级别/文本</div>
+    </div>
+  </div>
+
+  <div class="grid tab-section" data-tab-section="memory">
+    <div class="card">
+      <h3>淘汰黑名单（最近10条）</h3>
+      <div id="blacklistBox"></div>
+    </div>
+    <div class="card">
+      <h3>Agent 长期记忆摘要</h3>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <label class="k" for="agentSelect">选择 Agent：</label>
+        <select id="agentSelect" style="flex:1;padding:6px;border-radius:8px;border:1px solid var(--line);background:#0f1730;color:var(--text)"></select>
+      </div>
+      <div id="agentMemoryDetail" class="event" style="min-height:100px;white-space:pre-wrap"></div>
+    </div>
+  </div>
+
+  <div class="card tab-section" data-tab-section="memory" style="margin-top:12px">
+    <h3>审计哈希</h3>
+    <div id="hash" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all;color:var(--muted)"></div>
+  </div>
+</div>
+
+<script>
+window.__knowledgeByAgent = {};
+window.__blacklistByAgent = {};
+window.__control = {};
+window.__mode = {};
+window.__executionProfiles = [];
+window.__runtimeAcc = {};
+window.__activeTab = 'overview';
+
+function applyTab(tab) {
+  const target = tab || 'overview';
+  window.__activeTab = target;
+
+  document.querySelectorAll('#mainTabs .tab-btn').forEach(btn => {
+    const on = btn.getAttribute('data-tab') === target;
+    btn.classList.toggle('active', on);
+  });
+
+  document.querySelectorAll('.tab-section').forEach(sec => {
+    const hit = sec.getAttribute('data-tab-section') === target;
+    sec.classList.toggle('is-hidden', !hit);
+  });
+}
+
+function initTabs() {
+  document.querySelectorAll('#mainTabs .tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyTab(btn.getAttribute('data-tab')));
+  });
+  applyTab(window.__activeTab || 'overview');
+}
+
+async function load() {
+  let s, control, blacklist = { items: [] }, knowledge = { byAgent: {} };
+  try {
+    const res = await fetch('/api/state?ts=' + Date.now());
+    const obj = await res.json();
+    s = obj.state;
+    control = { okxProfile: 'demo', writeArmed: false, writeArmUntil: null, ...(obj.control || {}) };
+    blacklist = obj.blacklist || { items: [] };
+    knowledge = obj.knowledge || { byAgent: {} };
+  } catch {
+    const res = await fetch('../data/state.json?ts=' + Date.now());
+    s = await res.json();
+    control = { engineEnabled: true, mode: s.mode || { shadow_only: true, demo_trade: false }, okxProfile: 'demo', writeArmed: false, writeArmUntil: null };
+    try {
+      const b = await fetch('../data/blacklist.json?ts=' + Date.now());
+      blacklist = await b.json();
+    } catch {}
+  }
+
+  if (!s) return;
+
+  document.getElementById('regime').textContent = s.regime;
+  document.getElementById('riskLevel').textContent = `${s.risk.level} (${s.risk.a6Trigger30m}/30m)`;
+  document.getElementById('ddDay').textContent = `${s.risk.drawdownDayPct}%`;
+  document.getElementById('audit').textContent = s.audit.replayStatus;
+  document.getElementById('hash').textContent = s.audit.dailyRootHash;
+
+  const engineOn = !!control.engineEnabled;
+  const mode = control.mode || s.mode || {};
+  window.__mode = mode;
+  const engineEl = document.getElementById('engineStatus');
+  engineEl.textContent = engineOn ? '运行中' : '已暂停';
+  engineEl.style.color = engineOn ? 'var(--ok)' : 'var(--bad)';
+  document.getElementById('runMode').textContent = mode.demo_trade ? 'demo_trade' : 'shadow_only';
+
+  const writeArmEl = document.getElementById('writeArmStatus');
+  const writeArmUntilEl = document.getElementById('writeArmUntil');
+  const armUntil = control.writeArmUntil ? new Date(control.writeArmUntil) : null;
+  const armActive = !!control.writeArmed && (!armUntil || armUntil.getTime() > Date.now());
+  writeArmEl.textContent = armActive ? '已开启' : '未开启';
+  writeArmEl.style.color = armActive ? 'var(--ok)' : 'var(--warn)';
+  writeArmUntilEl.textContent = armUntil
+    ? `有效期至: ${armUntil.toLocaleString()}`
+    : '有效期: -';
+
+  window.__control = control;
+
+  const lastPush = (s.events || []).find(e => e.type === 'PUSH');
+  const pushEl = document.getElementById('pushStatus');
+  const pushTsEl = document.getElementById('pushTs');
+  if (!lastPush) {
+    pushEl.textContent = 'N/A';
+    pushEl.style.color = 'var(--muted)';
+    pushTsEl.textContent = '暂无推送记录';
+  } else {
+    const ok = (lastPush.level || '').toUpperCase() !== 'RED';
+    pushEl.textContent = ok ? '✅ 成功' : '❌ 失败';
+    pushEl.style.color = ok ? 'var(--ok)' : 'var(--bad)';
+    pushTsEl.textContent = `${new Date(lastPush.ts).toLocaleString()} · ${lastPush.text}`;
+  }
+
+  const runtimeAcc = s.account || {};
+  window.__runtimeAcc = runtimeAcc;
+  setAccountCards(runtimeAcc, 'source: shadow runtime');
+
+  const seatBody = document.getElementById('seatBody');
+  seatBody.innerHTML = '';
+  s.seats.forEach(x => {
+    const tr = document.createElement('tr');
+    const mode = x.executionMode === 'exec' ? 'EXEC' : 'SHADOW';
+    const modeColor = x.executionMode === 'exec' ? 'var(--ok)' : 'var(--muted)';
+    const cfConf = Number(x?.counterfactual?.confidence || 0);
+    const cfTag = cfConf > 0 ? ` <span style="font-size:11px;color:var(--muted)">C${Math.round(cfConf * 100)}%</span>` : '';
+    const sb = x.scoreBreakdown || {};
+    const gate = x.execGate || {};
+    const gateMeta = gate.required
+      ? ` <span style="font-size:11px;color:var(--warn)">GATE:${esc(gate.status || 'PENDING')} ${Number(gate.shadowRounds || 0)}/${Number(gate.minShadowRounds || 0)} ${esc(gate.replayStatus || '')}</span>`
+      : '';
+    const scoreMeta = sb.total !== undefined
+      ? ` <span style="font-size:11px;color:var(--muted)">RQ${Number(sb.RQ || 0).toFixed(1)}/CF${Number(sb.CF || 0).toFixed(1)}/RC${Number(sb.RC || 0).toFixed(1)}/ES${Number(sb.ES || 0).toFixed(1)}/CP${Number(sb.CP || 0).toFixed(1)}</span>`
+      : '';
+    const budgetMeta = x.budgetWeight !== undefined ? ` <span style="font-size:11px;color:var(--muted)">W${Math.round(Number(x.budgetWeight || 0) * 100)}%</span>` : '';
+    tr.innerHTML = `<td>${x.id} ${x.name}</td><td>${x.role}</td><td><span class="tag ${x.state}">${x.state}</span>${gateMeta}</td><td style="color:${modeColor}">${mode}</td><td>${esc(x.execProfile || '-')}</td><td>${x.score}${budgetMeta}${scoreMeta}</td><td>${x.decisionAlpha24h}${cfTag}</td><td>${x.pnl24h}%</td>`;
+    seatBody.appendChild(tr);
+  });
+
+  const ex = s.execution || {};
+  window.__executionProfiles = (ex.assigned || []).map(x => x.profile).filter(Boolean);
+  const execMeta = document.getElementById('execMeta');
+  const pendingN = (ex.pendingSwitches || []).length;
+  const cfSummary = s.metrics?.counterfactualSummary || {};
+  const hardV = Number(s?.risk?.hardViolations || ex?.lastOrderRun?.hardViolations || 0);
+  const lastRunMeta = ex?.lastOrderRun || {};
+  const demoWin = lastRunMeta?.demoWindow;
+  const demoWinText = demoWin?.enabled ? `${demoWin.window || '-'}@${demoWin.now || '--:--'}:${demoWin.active ? 'open' : 'closed'}` : 'n/a';
+  execMeta.textContent = `policy=${ex.policy || 'N/A'} · slots=${ex.slots ?? '-'} · eligible=${ex.eligibleCount ?? '-'} · gated=${ex.gatedCount ?? '-'} · confirmEpochs=${ex.switchConfirmEpochs ?? '-'} · pendingSwitches=${pendingN} · CF(conf)=${Math.round(Number(cfSummary.avgConfidence || 0) * 100)}% · hardV=${hardV} · demoWin=${demoWinText} · updatedEpoch=${ex.updatedEpoch ?? '-'} · updatedAt=${ex.updatedAt ? new Date(ex.updatedAt).toLocaleString() : '-'}`;
+  const execBody = document.getElementById('execBody');
+  const ranking = ex.ranking || [];
+  const assignedSet = new Set(ex.assignedAgentIds || []);
+  execBody.innerHTML = ranking.length
+    ? ranking.slice(0, 6).map(r => {
+      const mode = assignedSet.has(r.id) ? 'EXEC' : 'SHADOW';
+      const row = (ex.assigned || []).find(x => x.agentId === r.id);
+      return `<tr><td>${r.rank}</td><td>${esc(r.id)}</td><td>${r.composite}</td><td style="color:${mode==='EXEC' ? 'var(--ok)' : 'var(--muted)'}">${mode}</td><td>${esc(row?.profile || '-')}</td></tr>`;
+    }).join('')
+    : '<tr><td colspan="5">暂无执行资格数据</td></tr>';
+
+  const execLast = document.getElementById('execLast');
+  const lastRun = ex.lastOrderRun || {};
+  const lastKs = ex.lastKillSwitch || {};
+  const runText = lastRun.ts
+    ? `最近执行计划：${new Date(lastRun.ts).toLocaleString()} · orders=${lastRun.total ?? 0}, dryRun=${lastRun.dryRun ?? 0}, blocked=${lastRun.blocked ?? 0}, skipped=${lastRun.skipped ?? 0}, hardV=${lastRun.hardViolations ?? 0}, armRequired=${lastRun.armRequired ? 'yes' : 'no'}, armActive=${lastRun.armActive ? 'yes' : 'no'}, demoCap=${lastRun.demoWriteCount ?? 0}/${lastRun.demoRoundCap ?? '-'}, rej=${Math.round((Number(lastRun.rejectRate || 0)) * 100)}%, timeout=${Math.round((Number(lastRun.timeoutRate || 0)) * 100)}%, retryRec=${Math.round((Number(lastRun.retryRecoveryRate || 0)) * 100)}%, p95=${Number(lastRun.p95LatencyMs || 0)}ms, estCost=$${Number(lastRun.estTotalCostUsd || 0).toFixed(2)}`
+    : '最近执行计划：暂无';
+  const ksText = lastKs.ts
+    ? `最近KillSwitch：${new Date(lastKs.ts).toLocaleString()} · accounts=${(lastKs.profiles || []).length}`
+    : '最近KillSwitch：暂无';
+  execLast.innerHTML = `${runText}<br/>${ksText}`;
+
+  const positionBody = document.getElementById('positionBody');
+  positionBody.innerHTML = '';
+  s.seats.forEach(x => {
+    const p = x.position || {};
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${x.id}</td><td>${esc(p.instId || '-')}</td><td>${esc(p.side || '-')}</td><td>${p.qty ?? '-'}</td><td>${p.entryPx ?? '-'}</td><td>${p.markPx ?? '-'}</td><td style="color:${Number(p.unrealizedPnl||0) >= 0 ? 'var(--ok)' : 'var(--bad)'}">${p.unrealizedPnl ?? '-'}</td>`;
+    positionBody.appendChild(tr);
+  });
+
+  const ebox = document.getElementById('eventList');
+  ebox.innerHTML = '';
+  const latestEvents = (s.events || []).slice(0, 10);
+  latestEvents.forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'event';
+    div.innerHTML = `<div style="color:var(--muted)">${new Date(e.ts).toLocaleString()}</div><div>${e.type} · ${e.level} · ${e.text}</div>`;
+    ebox.appendChild(div);
+  });
+  ebox.scrollTop = 0;
+
+  const champs = s.champions || {};
+  const champRows = [
+    ['Overall', champs.overall],
+    ['Trend', champs.trend],
+    ['Range', champs.range],
+    ['High-Vol', champs.highVol]
+  ];
+  document.getElementById('champBody').innerHTML = champRows.map(([k, v]) => {
+    if (!v) return `<tr><td>${k}</td><td>-</td><td>-</td></tr>`;
+    return `<tr><td>${k}</td><td>${v.id} ${v.name}</td><td>${v.score}</td></tr>`;
+  }).join('');
+
+  const mbox = document.getElementById('mutationList');
+  mbox.innerHTML = '';
+  const ms = (s.semanticMutations || []).slice(0, 6);
+  if (!ms.length) {
+    mbox.innerHTML = '<div class="event">暂无语义突变记录</div>';
+  } else {
+    ms.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'event';
+      div.innerHTML = `<div style="color:var(--muted)">${new Date(m.ts).toLocaleString()} · ${m.agentId}</div><div>${m.reason}</div><div style="color:var(--muted)">status=${m.status} · ${m.promptHashBefore} → ${m.promptHashAfter}</div>`;
+      mbox.appendChild(div);
+    });
+  }
+
+  window.__knowledgeByAgent = knowledge.byAgent || {};
+  window.__blacklistByAgent = Object.fromEntries(((blacklist.items || []).map(x => [x.agentId, x])));
+
+  renderBlacklist(blacklist.items || []);
+  renderKnowledge(s, knowledge.byAgent || {});
+
+  drawLineage(s);
+  drawTimeline(s.events || []);
+
+  const ab = s.metrics.abTest || { baseline: {}, variant: {} };
+  const abe = s.metrics.abExperiment || {};
+  const aba = s.metrics.abAuto || {};
+  const sg = abe?.gates?.sampleGap || {};
+  const autoGap = aba?.sampleGap || {};
+  const rows = [
+    ['DecisionAlpha', ab.baseline.decisionAlpha, ab.variant.decisionAlpha],
+    ['Max Drawdown(%)', ab.baseline.maxDrawdown, ab.variant.maxDrawdown],
+    ['Halts', ab.baseline.halts, ab.variant.halts],
+    ['Auto Hook', '-', aba?.enabled ? (aba?.autoRunOnSampleReady ? 'ON' : 'OFF') : 'DISABLED'],
+    ['Auto Status', '-', aba?.status || '-'],
+    ['Auto Gap', '-', `DA(b/v) ${autoGap.decisionAlphaBaseline ?? '-'} / ${autoGap.decisionAlphaVariant ?? '-'} · EQ(b/v) ${autoGap.equityBaseline ?? '-'} / ${autoGap.equityVariant ?? '-'}`],
+    ['Sample Gate', '-', abe?.gates?.sampleOk ? 'OK' : `NO(${abe?.gates?.minSamplesPerWindow || '-'})`],
+    ['Sample Gap', '-', `DA(b/v) ${sg.decisionAlphaBaseline ?? '-'} / ${sg.decisionAlphaVariant ?? '-'} · EQ(b/v) ${sg.equityBaseline ?? '-'} / ${sg.equityVariant ?? '-'}`],
+    ['Eval Status', '-', abe?.gates?.status || '-'],
+    ['Gate Pass', '-', abe?.gates?.pass ? 'PASS' : 'WAIT'],
+    ['DD Better', '-', abe?.gates?.drawdownBetter ? 'YES' : 'NO'],
+    ['Halt Better', '-', abe?.gates?.haltBetter ? 'YES' : 'NO'],
+    ['DD Drop(%)', '-', abe?.gates?.drawdownDropPct ?? '-']
+  ];
+  document.getElementById('abBody').innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+
+  drawLineChart(s.metrics.decisionAlphaSeries || []);
+  drawEquityChart(s.metrics.accountEquitySeries || []);
+
+  const pushPayload = await loadPushBriefPayload();
+  renderAccountAnalysis(s, pushPayload, lastPush);
+
+  const execProfiles = window.__executionProfiles || [];
+  const profile = mode.demo_trade ? (execProfiles[0] || 'demo') : (control.okxProfile || 'demo');
+  syncOkxProfileOptions(profile, execProfiles);
+  const okxData = await loadOkxAccount(profile, false, false);
+
+  if (mode.demo_trade) {
+    const agg = await loadOkxExecutionAggregate(execProfiles, false);
+    if (agg?.ok) {
+      const sum = agg.summary || {};
+      const equity = Number(sum.equity);
+      const available = Number(sum.available);
+      const marginUsed = Number.isFinite(equity) && Number.isFinite(available)
+        ? Math.max(0, equity - available)
+        : Number(runtimeAcc.marginUsed || 0);
+      const pnl24h = Number.isFinite(Number(sum.pnl24h))
+        ? Number(sum.pnl24h)
+        : Number(runtimeAcc.pnl24h || 0);
+
+      setAccountCards({ equity, available, marginUsed, pnl24h }, `source: OKX demo aggregated (${agg.ready}/${agg.total})`);
+    } else if (okxData?.ok) {
+      const sum = okxData.summary || {};
+      const equity = Number(sum.equity);
+      const available = Number(sum.available);
+      const marginUsed = Number.isFinite(equity) && Number.isFinite(available)
+        ? Math.max(0, equity - available)
+        : Number(runtimeAcc.marginUsed || 0);
+      const pnl24h = Number.isFinite(Number(sum.pnl24h))
+        ? Number(sum.pnl24h)
+        : Number(runtimeAcc.pnl24h || 0);
+
+      setAccountCards({ equity, available, marginUsed, pnl24h }, `source: OKX demo (${okxData.profileResolved || 'demo'})`);
+    } else {
+      setAccountCards(runtimeAcc, 'source: runtime fallback（OKX demo 读取失败）');
+    }
+  } else {
+    renderExecAggregateRows([], { text: '当前非 demo_trade，未启用5账户聚合' });
+    setAccountCards(runtimeAcc, 'source: shadow runtime');
+  }
+}
+
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function syncOkxProfileOptions(selected, execProfiles = []) {
+  const sel = document.getElementById('okxProfile');
+  if (!sel) return;
+  const base = ['demo', 'live'];
+  const extra = [...new Set((execProfiles || []).filter(Boolean))].filter(x => !base.includes(x));
+  const options = [...base, ...extra];
+  sel.innerHTML = options.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  sel.value = options.includes(selected) ? selected : options[0];
+}
+
+function setAccountCards(acc, sourceText = '') {
+  document.getElementById('equity').textContent = Number.isFinite(Number(acc?.equity)) ? Number(acc.equity).toFixed(2) : '-';
+  document.getElementById('available').textContent = Number.isFinite(Number(acc?.available)) ? Number(acc.available).toFixed(2) : '-';
+  document.getElementById('marginUsed').textContent = Number.isFinite(Number(acc?.marginUsed)) ? Number(acc.marginUsed).toFixed(2) : '-';
+
+  const pnlEl = document.getElementById('accountPnl');
+  if (Number.isFinite(Number(acc?.pnl24h))) {
+    const v = Number(acc.pnl24h);
+    pnlEl.textContent = v.toFixed(2);
+    pnlEl.style.color = v >= 0 ? 'var(--ok)' : 'var(--bad)';
+  } else {
+    pnlEl.textContent = '-';
+    pnlEl.style.color = 'var(--text)';
+  }
+
+  const src = document.getElementById('accountSource');
+  if (src) src.textContent = sourceText || 'source: runtime';
+}
+
+function renderBlacklist(items){
+  const box = document.getElementById('blacklistBox');
+  const list = (items || []).slice(0, 10);
+  if (!list.length) {
+    box.innerHTML = '<div class="event">暂无黑名单记录</div>';
+    return;
+  }
+  box.innerHTML = list.map(x => {
+    const when = new Date(x.ts).toLocaleString();
+    const reason = esc(x.reason || '');
+    return `<div class="event"><div><b>${esc(x.agentId)}</b> · gen=${esc(x.generation ?? '-')}</div><div style="color:var(--muted)">${when}</div><div>${reason}</div></div>`;
+  }).join('');
+}
+
+function renderKnowledge(state, byAgent){
+  const sel = document.getElementById('agentSelect');
+  const detail = document.getElementById('agentMemoryDetail');
+  const seatIds = (state.seats || []).map(x => x.id);
+  const allIds = [...new Set([...seatIds, ...Object.keys(byAgent || {})])].sort();
+
+  if (!allIds.length) {
+    sel.innerHTML = '';
+    detail.textContent = '暂无 Agent 记忆数据';
+    return;
+  }
+
+  const prev = sel.value;
+  sel.innerHTML = allIds.map(id => `<option value="${esc(id)}">${esc(id)}</option>`).join('');
+  sel.value = allIds.includes(prev) ? prev : allIds[0];
+
+  const show = (id) => {
+    const k = byAgent[id];
+    if (!k) {
+      detail.textContent = `${id}: 暂无长期记忆摘要`;
+      return;
+    }
+    const meta = k.meta || {};
+    const summary = k.lastSummary || '暂无摘要（等待 epoch_close 复盘）';
+    detail.innerHTML = [
+      `<div><b>${esc(id)}</b> · generation=${esc(meta.generation ?? '-')} · status=${esc(meta.status ?? '-')}</div>`,
+      `<div style="color:var(--muted)">memory_events=${esc(k.eventCount ?? 0)} · lastSummarizedAt=${esc(meta.lastSummarizedAt || 'N/A')}</div>`,
+      `<div style="margin-top:8px;color:var(--muted)">${esc(summary).replace(/\n/g, '<br/>')}</div>`
+    ].join('');
+  };
+
+  sel.onchange = () => show(sel.value);
+  show(sel.value);
+}
+
+async function loadOkxAccount(profile = 'demo', force = false, persist = true){
+  const status = document.getElementById('okxStatus');
+  const summary = document.getElementById('okxSummary');
+  const bBody = document.getElementById('okxBalanceBody');
+  const pBody = document.getElementById('okxPosBody');
+  const sBody = document.getElementById('okxSpotBody');
+  const dSummary = document.getElementById('okxDerivSummary');
+  const sSummary = document.getElementById('okxSpotSummary');
+  window.__okxLocalCache = window.__okxLocalCache || {};
+
+  status.textContent = `读取 OKX 中... profile=${profile}`;
+  status.style.color = 'var(--muted)';
+
+  try {
+    const level = 'fast';
+    const qs = new URLSearchParams({ profile, level });
+    if (force) qs.set('force', '1');
+    const res = await fetch(`/api/okx/account?${qs.toString()}`);
+    let data = await res.json();
+
+    if (!data.ok) {
+      const local = window.__okxLocalCache[profile];
+      if (local?.ok) {
+        status.textContent = `读取失败，已回退本地缓存：${data.error || 'unknown error'}`;
+        status.style.color = 'var(--warn)';
+        data = { ...local, cached: true, partial: true, warning: `接口失败已回退缓存：${data.error || 'unknown error'}` };
+      } else {
+        status.textContent = `读取失败：${data.error || 'unknown error'}`;
+        status.style.color = 'var(--bad)';
+        const tried = Array.isArray(data.triedProfiles) && data.triedProfiles.length
+          ? `<div style="margin-top:4px">尝试过 profiles: ${esc(data.triedProfiles.join(', '))}</div>`
+          : '';
+        summary.innerHTML = `<div>${esc(data.hint || '请检查 OKX 凭据与网络')}</div>${tried}`;
+        bBody.innerHTML = '<tr><td colspan="4">-</td></tr>';
+        pBody.innerHTML = '<tr><td colspan="6">-</td></tr>';
+        sBody.innerHTML = '<tr><td colspan="4">-</td></tr>';
+        dSummary.textContent = '-';
+        sSummary.textContent = '-';
+        return data;
+      }
+    }
+
+    if (persist && window.__control?.okxProfile !== profile) {
+      window.__control.okxProfile = profile;
+    }
+
+    window.__okxLocalCache[profile] = { ...data, ok: true };
+
+    const s = data.summary || {};
+    const fetched = data.fetchedAt ? new Date(data.fetchedAt).toLocaleString() : '-';
+    const resolvedText = data.profileResolved && data.profileResolved !== data.profile ? ` -> ${data.profileResolved}` : '';
+    const levelText = data.level ? ` · ${String(data.level).toUpperCase()}` : '';
+    status.textContent = `OKX 已更新 · profile=${data.profile}${resolvedText}${levelText}${data.cached ? '（缓存）' : ''} · ${fetched}`;
+    status.style.color = 'var(--ok)';
+    const warn = data.partial ? `<div style="margin-top:4px;color:var(--warn)">⚠️ ${esc(data.warning || '读取部分失败')}</div>` : '';
+    const pnl24 = Number(s.pnl24h || 0);
+    summary.innerHTML = `
+      <div><b>权益:</b> ${numFmt(s.equity)} · <b>可用:</b> ${numFmt(s.available)} · <b>冻结:</b> ${numFmt(s.frozen)}</div>
+      <div style="margin-top:4px"><b>持仓数:</b> ${s.positionCount ?? 0} · <b>未实现PnL:</b> <span style="color:${Number(s.unrealizedPnl||0) >= 0 ? 'var(--ok)' : 'var(--bad)'}">${numFmt(s.unrealizedPnl)}</span></div>
+      <div style="margin-top:4px"><b>24h已实现PnL:</b> <span style="color:${Number(s.realizedPnl24h||0) >= 0 ? 'var(--ok)' : 'var(--bad)'}">${numFmt(s.realizedPnl24h)}</span> · <b>24h总PnL:</b> <span style="color:${pnl24 >= 0 ? 'var(--ok)' : 'var(--bad)'}">${numFmt(pnl24)}</span></div>
+      ${warn}
+    `;
+
+    const balances = (data.balances || []).slice(0, 8);
+    bBody.innerHTML = balances.length
+      ? balances.map(x => `<tr><td>${esc(x.ccy)}</td><td>${numFmt(x.equity)}</td><td>${numFmt(x.available)}</td><td>${numFmt(x.frozen)}</td></tr>`).join('')
+      : '<tr><td colspan="4">暂无余额数据</td></tr>';
+
+    const posRaw = (data.positions || []);
+    const pos = posRaw.slice(0, 12);
+    pBody.innerHTML = pos.length
+      ? pos.map(x => `<tr><td>${esc(x.instId)}</td><td>${esc(x.side)}</td><td>${numFmt(x.qty)}</td><td>${numFmt(x.avgPx)}</td><td>${numFmt(x.markPx)}</td><td style="color:${Number(x.upl||0) >= 0 ? 'var(--ok)' : 'var(--bad)'}">${numFmt(x.upl)}</td></tr>`).join('')
+      : '<tr><td colspan="6">暂无衍生品持仓（可能为空仓）</td></tr>';
+
+    const derivNotional = posRaw.reduce((a, x) => a + Math.abs(Number(x.qty || 0) * Number(x.markPx || 0)), 0);
+    const derivUpl = posRaw.reduce((a, x) => a + Number(x.upl || 0), 0);
+    dSummary.innerHTML = `持仓数: ${posRaw.length} · 名义敞口: ${numFmt(derivNotional)} · 未实现PnL: <span style="color:${derivUpl >= 0 ? 'var(--ok)' : 'var(--bad)'}">${numFmt(derivUpl)}</span>`;
+
+    const spotRaw = (data.balances || []).filter(x => Number(x.equity || 0) > 0);
+    const spot = spotRaw.slice(0, 12);
+    sBody.innerHTML = spot.length
+      ? spot.map(x => `<tr><td>${esc(x.ccy)}</td><td>${numFmt(x.equity)}</td><td>${numFmt(x.available)}</td><td>${numFmt(x.eqUsd)}</td></tr>`).join('')
+      : '<tr><td colspan="4">暂无现货持仓</td></tr>';
+
+    const spotUsd = spotRaw.reduce((a, x) => a + Number(x.eqUsd || 0), 0);
+    sSummary.innerHTML = `币种数: ${spotRaw.length} · 现货估值(USD): ${numFmt(spotUsd)}`;
+    return data;
+  } catch (e) {
+    const local = window.__okxLocalCache?.[profile];
+    if (local?.ok) {
+      status.textContent = `读取失败，继续显示本地缓存：${e.message || e}`;
+      status.style.color = 'var(--warn)';
+      return { ...local, cached: true, partial: true, warning: `接口失败已回退本地缓存：${e.message || e}` };
+    }
+
+    status.textContent = `读取失败：${e.message || e}`;
+    status.style.color = 'var(--bad)';
+    summary.textContent = 'OKX API 暂不可用';
+    bBody.innerHTML = '<tr><td colspan="4">-</td></tr>';
+    pBody.innerHTML = '<tr><td colspan="6">-</td></tr>';
+    sBody.innerHTML = '<tr><td colspan="4">-</td></tr>';
+    dSummary.textContent = '-';
+    sSummary.textContent = '-';
+    return { ok: false, error: String(e?.message || e) };
+  }
+}
+
+function renderExecAggregateRows(rows = [], extra = {}) {
+  const body = document.getElementById('okxExecAcctBody');
+  const summary = document.getElementById('okxExecAcctSummary');
+  if (!body || !summary) return;
+
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="6">-</td></tr>';
+    summary.textContent = extra.text || '-';
+    return;
+  }
+
+  body.innerHTML = rows.map(r => {
+    const pnl = Number(r.summary?.pnl24h || 0);
+    return `<tr>
+      <td>${esc(r.profile)}</td>
+      <td>${numFmt(r.summary?.equity)}</td>
+      <td>${numFmt(r.summary?.available)}</td>
+      <td>${r.summary?.positionCount ?? 0}</td>
+      <td style="color:${pnl >= 0 ? 'var(--ok)' : 'var(--bad)'}">${numFmt(pnl)}</td>
+      <td style="color:${r.ok ? 'var(--ok)' : 'var(--bad)'}">${r.ok ? 'OK' : 'FAIL'}</td>
+    </tr>`;
+  }).join('');
+
+  summary.textContent = extra.text || '-';
+}
+
+async function loadOkxExecutionAggregate(profiles = [], force = false) {
+  const unique = [...new Set((profiles || []).filter(Boolean))];
+  if (!unique.length) {
+    renderExecAggregateRows([], { text: '暂无执行子账户映射' });
+    return { ok: false, total: 0, ready: 0 };
+  }
+
+  const rows = [];
+  const level = 'fast';
+
+  for (const profile of unique) {
+    try {
+      const qs = new URLSearchParams({ profile, level });
+      if (force) qs.set('force', '1');
+      const res = await fetch(`/api/okx/account?${qs.toString()}`);
+      const data = await res.json();
+      rows.push({
+        ok: !!data.ok,
+        profile,
+        profileResolved: data.profileResolved || profile,
+        summary: data.summary || {},
+        error: data.error || ''
+      });
+    } catch (e) {
+      rows.push({ ok: false, profile, profileResolved: profile, summary: {}, error: String(e?.message || e) });
+    }
+
+    // 串行读取时给一点节流，减少接口抖动和页面卡顿
+    await new Promise(r => setTimeout(r, 120));
+  }
+
+  const readyRows = rows.filter(r => r.ok);
+  const agg = readyRows.reduce((a, r) => {
+    a.equity += Number(r.summary?.equity || 0);
+    a.available += Number(r.summary?.available || 0);
+    a.positionCount += Number(r.summary?.positionCount || 0);
+    a.unrealizedPnl += Number(r.summary?.unrealizedPnl || 0);
+    a.realizedPnl24h += Number(r.summary?.realizedPnl24h || 0);
+    a.pnl24h += Number(r.summary?.pnl24h || 0);
+    return a;
+  }, { equity: 0, available: 0, positionCount: 0, unrealizedPnl: 0, realizedPnl24h: 0, pnl24h: 0 });
+
+  const text = `已同步 ${readyRows.length}/${unique.length} 个执行子账户（串行） · 合计权益=${numFmt(agg.equity)} · 合计24hPnL=${numFmt(agg.pnl24h)}`;
+  renderExecAggregateRows(rows, { text });
+
+  return {
+    ok: readyRows.length > 0,
+    partial: readyRows.length < unique.length,
+    total: unique.length,
+    ready: readyRows.length,
+    rows,
+    summary: agg
+  };
+}
+
+function numFmt(v){
+  const n = Number(v);
+  if (!Number.isFinite(n)) return '-';
+  return Math.abs(n) >= 1000 ? n.toFixed(2) : n.toFixed(4);
+}
+
+function drawLineage(s){
+  const svg = document.getElementById('lineageSvg');
+  const detail = document.getElementById('lineageDetail');
+  const edgesRaw = (s.lineageHistory || []).slice().reverse();
+  const sem = (s.semanticMutations || []).slice().reverse().map(m => ({
+    ts: m.ts,
+    parentId: m.parentId || 'unknown',
+    childId: m.agentId || 'unknown',
+    trigger: 'SEMANTIC_MUTATION',
+    reason: m.reason || ''
+  }));
+  const edges = [...edgesRaw, ...sem].slice(-24);
+
+  if (!edges.length) {
+    svg.innerHTML = `<text x="20" y="30" fill="#a9b4d0" font-size="14">暂无谱系数据</text>`;
+    if (detail) detail.textContent = '暂无谱系详情';
+    return;
+  }
+
+  const nodeMap = new Map();
+  for (const e of edges) {
+    nodeMap.set(e.parentId, { id: e.parentId });
+    nodeMap.set(e.childId, { id: e.childId });
+  }
+
+  const parents = new Set(edges.map(e => e.parentId));
+  const children = new Set(edges.map(e => e.childId));
+  const roots = [...parents].filter(p => !children.has(p));
+  if (!roots.length) roots.push(edges[0].parentId);
+
+  const level = {};
+  const q = roots.map(r => ({ id: r, lv: 0 }));
+  for (const r of roots) level[r] = 0;
+
+  while (q.length) {
+    const { id, lv } = q.shift();
+    const outs = edges.filter(e => e.parentId === id);
+    for (const o of outs) {
+      const nl = lv + 1;
+      if (!(o.childId in level) || level[o.childId] < nl) {
+        level[o.childId] = nl;
+        q.push({ id: o.childId, lv: nl });
+      }
+    }
+  }
+
+  for (const id of nodeMap.keys()) if (!(id in level)) level[id] = 0;
+
+  const groups = {};
+  Object.entries(level).forEach(([id, lv]) => {
+    groups[lv] = groups[lv] || [];
+    groups[lv].push(id);
+  });
+
+  const maxLv = Math.max(...Object.values(level));
+  const width = 760, height = 260;
+  const pos = {};
+  Object.entries(groups).forEach(([lvStr, ids]) => {
+    const lv = Number(lvStr);
+    ids.sort();
+    ids.forEach((id, i) => {
+      const x = 60 + (maxLv ? (lv / maxLv) * (width - 120) : 0);
+      const y = 40 + (i + 1) * ((height - 80) / (ids.length + 1));
+      pos[id] = { x, y };
+    });
+  });
+
+  const edgeColor = t => t === 'SEMANTIC_MUTATION' ? '#fbbf24' : '#66b2ff';
+  const lines = edges.map(e => {
+    const a = pos[e.parentId], b = pos[e.childId];
+    if (!a || !b) return '';
+    return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${edgeColor(e.trigger)}" stroke-width="2" opacity="0.85"><title>${esc(e.trigger)}: ${esc(e.reason || '')}</title></line>`;
+  }).join('');
+
+  const nodes = Object.keys(pos).map(id => {
+    const p = pos[id];
+    return `<g data-node="${esc(id)}" style="cursor:pointer"><circle data-node-circle="${esc(id)}" cx="${p.x}" cy="${p.y}" r="8" fill="#36d399" stroke="#0b1020" stroke-width="2"></circle><text x="${p.x + 12}" y="${p.y + 4}" fill="#ecf0ff" font-size="12">${esc(id)}</text></g>`;
+  }).join('');
+
+  svg.innerHTML = `<rect x="0" y="0" width="760" height="260" fill="transparent"></rect>${lines}${nodes}`;
+
+  const relatedByNode = {};
+  for (const id of Object.keys(pos)) {
+    relatedByNode[id] = edges.filter(e => e.parentId === id || e.childId === id)
+      .sort((a, b) => new Date(b.ts || 0) - new Date(a.ts || 0));
+  }
+
+  const seatMap = new Map((s.seats || []).map(x => [x.id, x]));
+
+  function paintSelected(id){
+    svg.querySelectorAll('[data-node-circle]').forEach(c => c.setAttribute('fill', '#36d399'));
+    const me = svg.querySelector(`[data-node-circle="${CSS.escape(id)}"]`);
+    if (me) me.setAttribute('fill', '#fbbf24');
+  }
+
+  function renderDetail(id){
+    const seat = seatMap.get(id);
+    const rel = (relatedByNode[id] || []).slice(0, 4);
+    const lines = rel.map(r => `• ${r.trigger}: ${r.parentId} → ${r.childId}（${(r.reason || '').slice(0, 40)}）`);
+
+    const kb = (window.__knowledgeByAgent || {})[id];
+    const bl = (window.__blacklistByAgent || {})[id];
+    const summary = kb?.lastSummary ? esc(kb.lastSummary).replace(/\n/g, '<br/>') : '暂无长期记忆摘要';
+    const blText = bl ? `⚠️ 黑名单：${esc(bl.reason || '')}` : '黑名单：否';
+
+    detail.innerHTML = `
+      <div><b>${esc(id)}</b>${seat ? ` · ${esc(seat.role)} · score=${seat.score} · state=${seat.state}` : ''}</div>
+      <div style="margin-top:4px;color:var(--muted)">${lines.length ? lines.map(esc).join('<br/>') : '暂无相关演化记录'}</div>
+      <div style="margin-top:6px;color:${bl ? 'var(--warn)' : 'var(--muted)'}">${blText}</div>
+      <div style="margin-top:6px;color:var(--muted)">${summary}</div>
+    `;
+  }
+
+  const ids = Object.keys(pos).sort();
+  ids.forEach(id => {
+    const g = svg.querySelector(`[data-node="${CSS.escape(id)}"]`);
+    if (!g) return;
+    g.addEventListener('click', () => {
+      paintSelected(id);
+      renderDetail(id);
+    });
+  });
+
+  if (ids.length) {
+    paintSelected(ids[0]);
+    renderDetail(ids[0]);
+  }
+}
+
+function drawTimeline(events){
+  const svg = document.getElementById('timelineSvg');
+  const detail = document.getElementById('timelineHoverDetail');
+  const list = (events || []).slice(0, 12).reverse();
+  if (!list.length) {
+    svg.innerHTML = `<text x="20" y="30" fill="#a9b4d0" font-size="14">暂无事件</text>`;
+    if (detail) detail.textContent = '暂无事件';
+    return;
+  }
+
+  const width = 420, height = 260;
+  const times = list.map(e => new Date(e.ts).getTime());
+  const minT = Math.min(...times), maxT = Math.max(...times);
+  const xAt = t => (maxT === minT ? 56 : 56 + ((t - minT) / (maxT - minT)) * (width - 112));
+  const yAt = i => 28 + i * ((height - 56) / Math.max(1, list.length - 1));
+  const color = (type, level) => {
+    if (level === 'RED') return '#f87171';
+    if (type === 'EVOLVE' || type === 'SEMANTIC_MUTATION') return '#fbbf24';
+    if (type === 'PUSH') return '#60a5fa';
+    if (type === 'CONTROL') return '#34d399';
+    return '#a78bfa';
+  };
+
+  const axis = `<line x1="34" y1="18" x2="34" y2="${height - 18}" stroke="#2a355d" stroke-width="2"></line>`;
+  const dots = list.map((e, i) => {
+    const y = yAt(i);
+    const x = xAt(new Date(e.ts).getTime());
+    const tm = new Date(e.ts).toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    const compact = `${tm} · ${String(e.type || '').slice(0, 10)}`;
+    const showLabel = list.length <= 8 || i % 2 === 0 || i === list.length - 1;
+
+    return `
+      <g class="timeline-node" data-i="${i}" style="cursor:pointer">
+        <line x1="34" y1="${y}" x2="${x}" y2="${y}" stroke="#2a355d" stroke-width="1" opacity="0.8"></line>
+        <circle cx="${x}" cy="${y}" r="9" fill="transparent"></circle>
+        <circle data-dot="${i}" cx="${x}" cy="${y}" r="5" fill="${color(e.type, e.level)}"></circle>
+        ${showLabel ? `<text x="${Math.min(x + 10, width - 145)}" y="${y + 4}" fill="#dbe5ff" font-size="10.5">${esc(compact)}</text>` : ''}
+      </g>`;
+  }).join('');
+
+  svg.innerHTML = `<rect x="0" y="0" width="420" height="260" fill="transparent"></rect>${axis}${dots}`;
+
+  const paint = (idx) => {
+    svg.querySelectorAll('[data-dot]').forEach(d => {
+      d.setAttribute('stroke', 'none');
+      d.setAttribute('stroke-width', '0');
+    });
+    const cur = svg.querySelector(`[data-dot="${idx}"]`);
+    if (cur) {
+      cur.setAttribute('stroke', '#ffffff');
+      cur.setAttribute('stroke-width', '1.5');
+    }
+  };
+
+  const renderDetail = (idx) => {
+    if (!detail) return;
+    const e = list[idx];
+    if (!e) return;
+    const when = new Date(e.ts).toLocaleString();
+    detail.innerHTML = `时间：${esc(when)} · 级别：${esc(e.level || '-') } · 类型：${esc(e.type || '-')}<br/>文本：${esc(e.text || '-')}`;
+  };
+
+  svg.querySelectorAll('.timeline-node').forEach(g => {
+    const idx = Number(g.getAttribute('data-i'));
+    g.addEventListener('mouseenter', () => {
+      paint(idx);
+      renderDetail(idx);
+    });
+    g.addEventListener('click', () => {
+      paint(idx);
+      renderDetail(idx);
+    });
+  });
+
+  const latestIdx = list.length - 1;
+  paint(latestIdx);
+  renderDetail(latestIdx);
+}
+
+function drawLineChart(series){
+  const c = document.getElementById('daChart');
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  ctx.clearRect(0,0,w,h);
+
+  if (!series || !series.length) {
+    ctx.fillStyle = '#a9b4d0';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('暂无 DecisionAlpha 数据', 40, 40);
+    return;
+  }
+
+  const vals = series.map(x=>x.value);
+  const min = Math.min(...vals) - 0.02;
+  const max = Math.max(...vals) + 0.02;
+  const px = i => 40 + i * ((w-60)/(Math.max(1, series.length-1)));
+  const py = v => h-30 - ((v-min)/(max-min || 1)) * (h-60);
+
+  ctx.strokeStyle = '#2a355d';
+  for(let i=0;i<5;i++){ const y=20+i*((h-50)/4); ctx.beginPath(); ctx.moveTo(35,y); ctx.lineTo(w-15,y); ctx.stroke(); }
+
+  ctx.strokeStyle = '#66b2ff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  series.forEach((p,i)=>{ const x=px(i), y=py(p.value); i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+  ctx.stroke();
+
+  ctx.fillStyle = '#9ad1ff';
+  series.forEach((p,i)=>{ const x=px(i), y=py(p.value); ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill(); });
+
+  ctx.fillStyle = '#a9b4d0';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('DecisionAlpha', 40, 14);
+  ctx.fillText(series[0].ts, 40, h-8);
+  ctx.fillText(series[series.length-1].ts, w-100, h-8);
+}
+
+function drawEquityChart(series){
+  const c = document.getElementById('equityChart');
+  const hint = document.getElementById('equityTrendHint');
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  ctx.clearRect(0,0,w,h);
+
+  if (!series || !series.length) {
+    ctx.fillStyle = '#a9b4d0';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('暂无权益数据', 40, 40);
+    if (hint) hint.textContent = '暂无权益样本，先运行几轮 round_tick 再观察趋势。';
+    return;
+  }
+
+  const vals = series.map(x => Number(x.value)).filter(Number.isFinite);
+  if (!vals.length) {
+    ctx.fillStyle = '#a9b4d0';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('权益数据异常', 40, 40);
+    if (hint) hint.textContent = '权益数据异常，请刷新或检查 runtime/account 数据源。';
+    return;
+  }
+
+  const rawMin = Math.min(...vals);
+  const rawMax = Math.max(...vals);
+  const span = Math.max(1e-6, rawMax - rawMin);
+  const pad = span * 0.18;
+  const min = rawMin - pad;
+  const max = rawMax + pad;
+
+  const px = i => 40 + i * ((w - 60) / Math.max(1, vals.length - 1));
+  const py = v => h - 30 - ((v - min) / ((max - min) || 1)) * (h - 60);
+
+  // 网格
+  ctx.strokeStyle = '#2a355d';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    const y = 20 + i * ((h - 50) / 4);
+    ctx.beginPath();
+    ctx.moveTo(35, y);
+    ctx.lineTo(w - 15, y);
+    ctx.stroke();
+  }
+
+  const first = vals[0];
+  const last = vals[vals.length - 1];
+  const diff = last - first;
+  const diffPct = first !== 0 ? (diff / first) * 100 : 0;
+  const rangePct = first !== 0 ? ((rawMax - rawMin) / Math.abs(first)) * 100 : 0;
+
+  // 起点基准虚线（更容易看懂是涨还是跌）
+  ctx.save();
+  ctx.setLineDash([5, 4]);
+  ctx.strokeStyle = '#4b5f92';
+  ctx.beginPath();
+  ctx.moveTo(35, py(first));
+  ctx.lineTo(w - 15, py(first));
+  ctx.stroke();
+  ctx.restore();
+
+  // 曲线面积渐变
+  const areaGradient = ctx.createLinearGradient(0, 20, 0, h - 30);
+  areaGradient.addColorStop(0, diff >= 0 ? 'rgba(52,211,153,0.30)' : 'rgba(248,113,113,0.26)');
+  areaGradient.addColorStop(1, 'rgba(96,165,250,0.03)');
+
+  ctx.beginPath();
+  vals.forEach((v, i) => {
+    const x = px(i), y = py(v);
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  });
+  ctx.lineTo(px(vals.length - 1), h - 30);
+  ctx.lineTo(px(0), h - 30);
+  ctx.closePath();
+  ctx.fillStyle = areaGradient;
+  ctx.fill();
+
+  // 主曲线
+  const lineGradient = ctx.createLinearGradient(40, 0, w - 20, 0);
+  lineGradient.addColorStop(0, diff >= 0 ? '#34d399' : '#f87171');
+  lineGradient.addColorStop(1, '#60a5fa');
+  ctx.strokeStyle = lineGradient;
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  vals.forEach((v, i) => {
+    const x = px(i), y = py(v);
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  });
+  ctx.stroke();
+
+  // 起点/终点高亮
+  const sx = px(0), sy = py(first);
+  const ex = px(vals.length - 1), ey = py(last);
+  ctx.fillStyle = '#9ad1ff';
+  ctx.beginPath(); ctx.arc(sx, sy, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(ex, ey, 4.5, 0, Math.PI * 2); ctx.fill();
+
+  // 文本信息
+  const sign = diff >= 0 ? '+' : '';
+  ctx.fillStyle = diff >= 0 ? '#34d399' : '#f87171';
+  ctx.font = '12px sans-serif';
+  ctx.fillText(`净变化 ${sign}${diff.toFixed(2)} (${sign}${diffPct.toFixed(2)}%)`, 40, 14);
+  ctx.fillStyle = '#a9b4d0';
+  ctx.fillText(`区间波动 ${rangePct.toFixed(2)}%`, w - 125, 14);
+  ctx.fillText(series[0].ts || '-', 40, h - 8);
+  ctx.fillText(series[series.length - 1].ts || '-', w - 105, h - 8);
+
+  if (vals.length === 1) {
+    ctx.fillStyle = '#a9b4d0';
+    ctx.fillText('仅 1 个样本点，运行几轮后将显示曲线', 170, 32);
+  }
+
+  // 趋势解释（简要）
+  let trend = '横盘';
+  let meaning = '资金曲线在窄幅震荡，通常是观望或信号分歧期。';
+  let color = '#60a5fa';
+
+  if (diffPct >= 0.6) {
+    trend = '上行';
+    meaning = '账户净值在扩张，当前策略阶段相对有效。';
+    color = '#34d399';
+  } else if (diffPct <= -0.6) {
+    trend = '下行';
+    meaning = '回撤在扩大，建议降杠杆并收紧止损。';
+    color = '#f87171';
+  }
+
+  const volText = rangePct >= 2.5 ? '（波动偏大）' : rangePct <= 0.8 ? '（波动较小）' : '（波动中等）';
+  if (hint) {
+    hint.innerHTML = `<span style="color:${color};font-weight:600">当前走势：${trend}</span> ${volText} · ${meaning}`;
+  }
+}
+
+async function loadPushBriefPayload() {
+  try {
+    const res = await fetch('/output/push-brief.json?ts=' + Date.now());
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+function pickAgentComment(a = {}) {
+  const cf = Number(a?.counterfactual?.decisionAlpha || 0);
+  const win = Number(a?.counterfactual?.winRate || 0);
+  const upnl = Number(a?.position?.unrealizedPnl || 0);
+  const state = String(a?.state || '').toUpperCase();
+
+  if (cf > 0.0006 && win >= 0.55) return '边际优势明显，可保留/优先执行。';
+  if (cf <= -0.0012 || win < 0.38) return '负边际明显，建议降权或仅保留观测。';
+  if (state === 'WARN') return '状态告警，需收敛风险暴露。';
+  if (upnl > 0 && cf >= 0) return '短期表现尚可，但需继续验证稳定性。';
+  if (upnl < 0 && cf < 0) return '浮亏与反事实同向，建议缩仓并复核参数。';
+  return '表现中性，建议小仓位持续观察。';
+}
+
+function buildFallbackAnalysisText(state, lastPush) {
+  const seats = state?.seats || [];
+  const risk = state?.risk || {};
+  const account = state?.account || {};
+  const execution = state?.execution || {};
+  const exAssigned = execution?.assigned || [];
+  const warnCount = seats.filter(x => String(x?.state || '').toUpperCase() === 'WARN').length;
+  const activeCount = seats.filter(x => String(x?.state || '').toUpperCase() === 'ACTIVE').length;
+
+  const totalNotional = seats.reduce((a, x) => a + Math.abs(Number(x?.position?.notional || 0)), 0);
+  const byInst = {};
+  seats.forEach(x => {
+    const inst = x?.position?.instId || 'N/A';
+    byInst[inst] = (byInst[inst] || 0) + Math.abs(Number(x?.position?.notional || 0));
+  });
+  const instTop = Object.entries(byInst).sort((a, b) => b[1] - a[1])[0];
+  const concentration = totalNotional > 0 && instTop ? (instTop[1] / totalNotional) : 0;
+
+  const topByCf = [...seats].sort((a, b) => Number(b?.counterfactual?.decisionAlpha || 0) - Number(a?.counterfactual?.decisionAlpha || 0))[0];
+  const orderRun = execution?.lastOrderRun || {};
+
+  const lines = [];
+  lines.push('【全局状态】');
+  lines.push(`- 截面时间：${state?.generatedAt ? new Date(state.generatedAt).toLocaleString() : '-'}`);
+  lines.push(`- Regime=${state?.regime || '-'} | 风险=${risk.level || '-'} | 账户权益=${numFmt(account.equity)} | 24hPnL=${numFmt(account.pnl24h)}`);
+  lines.push(`- Agent状态：ACTIVE=${activeCount}, WARN=${warnCount}, EXEC=${exAssigned.length}, SHADOW=${Math.max(0, seats.length - exAssigned.length)}`);
+  if (lastPush?.ts) {
+    lines.push(`- 最近推送：${new Date(lastPush.ts).toLocaleString()} · ${lastPush.text || '-'}`);
+  }
+
+  lines.push('');
+  lines.push('【6个Agent逐个点评】');
+  seats.forEach(a => {
+    const cf = Number(a?.counterfactual?.decisionAlpha || 0);
+    const win = Number(a?.counterfactual?.winRate || 0);
+    const upnl = Number(a?.position?.unrealizedPnl || 0);
+    const mode = String(a?.executionMode || 'shadow').toUpperCase();
+    lines.push(`- ${a.id} ${a.name}（${a.role}，${a.state}，${mode}）Score=${Number(a?.score || 0).toFixed(2)} | CF=${cf.toFixed(6)} | Win=${(win * 100).toFixed(1)}% | uPnL=${numFmt(upnl)}：${pickAgentComment(a)}`);
+  });
+
+  lines.push('');
+  lines.push('【结构性问题】');
+  if (topByCf && String(topByCf.executionMode || '').toLowerCase() === 'shadow') {
+    lines.push(`- 强势席位错配：${topByCf.id} 反事实优势最高但当前在 SHADOW，可关注执行席切换。`);
+  }
+  if (concentration >= 0.45) {
+    lines.push(`- 敞口集中：${instTop[0]} 名义占比约 ${(concentration * 100).toFixed(1)}%，建议限制单标的集中度。`);
+  }
+  if (warnCount >= 2) {
+    lines.push(`- 状态退化：WARN席位=${warnCount}，建议对低CF席位降权并收紧止损。`);
+  }
+  if (Number(orderRun.total || 0) === 0 && Number(orderRun.skipped || 0) >= seats.length) {
+    lines.push(`- 执行不足：最近一轮全部跳过（skipped=${orderRun.skipped || 0}），信号阈值/交易窗口可能过严。`);
+  }
+  if (!lines[lines.length - 1].startsWith('- ')) {
+    lines.push('- 暂无明显结构性异常。');
+  }
+
+  return lines.join('\n');
+}
+
+function classifyAgentStrength(review = {}) {
+  const cf = Number(review?.counterfactualDecisionAlpha ?? review?.cf ?? 0);
+  const win = Number(review?.winRatePct ?? review?.winRate ?? 0);
+  const state = String(review?.state || '').toUpperCase();
+
+  if (cf > 0.0006 && win >= 55 && state !== 'WARN') {
+    return { label: '强', cls: 'analysis-badge-strong' };
+  }
+  if (cf <= -0.0012 || win < 38 || state === 'WARN') {
+    return { label: '弱', cls: 'analysis-badge-weak' };
+  }
+  return { label: '中', cls: 'analysis-badge-medium' };
+}
+
+function renderStructuredAnalysis(pAnalysis = {}) {
+  const global = Array.isArray(pAnalysis.globalStatus) ? pAnalysis.globalStatus : [];
+  const reviews = Array.isArray(pAnalysis.agentReviews) ? pAnalysis.agentReviews : [];
+  const issues = Array.isArray(pAnalysis.structuralIssues) ? pAnalysis.structuralIssues : [];
+
+  const globalHtml = global.length
+    ? `<ul class="analysis-list">${global.map(x => `<li>${esc(String(x || '').replace(/^\s*[-•]\s*/, ''))}</li>`).join('')}</ul>`
+    : `<div class="analysis-mini">暂无全局状态</div>`;
+
+  const reviewsHtml = reviews.length
+    ? reviews.map((r, idx) => {
+      const tag = classifyAgentStrength(r);
+      const score = Number(r?.score);
+      const cf = Number(r?.counterfactualDecisionAlpha);
+      const win = Number(r?.winRatePct);
+      const signal = Number(r?.signal);
+      const upnl = Number(r?.unrealizedPnl);
+      const open = idx < 2 ? ' open' : '';
+      return `<details class="analysis-agent-item"${open}>
+        <summary>
+          <span class="analysis-agent-id">${esc(r?.id || '-')} ${esc(r?.name || '')}</span>
+          <span class="analysis-badge ${tag.cls}">${tag.label}</span>
+          <span class="analysis-mini">${esc(r?.state || '-')} · ${esc(r?.executionMode || '-')}</span>
+        </summary>
+        <div class="analysis-agent-body">
+          <div>角色：${esc(r?.role || '-')} | Score=${Number.isFinite(score) ? score.toFixed(2) : '-'} | CF=${Number.isFinite(cf) ? cf.toFixed(6) : '-'} | Win=${Number.isFinite(win) ? win.toFixed(1) : '-'}% | 信号=${Number.isFinite(signal) ? signal.toFixed(3) : '-'} | uPnL=${Number.isFinite(upnl) ? upnl.toFixed(2) : '-'}</div>
+          <div style="margin-top:4px">点评：${esc(r?.comment || '暂无点评')}</div>
+        </div>
+      </details>`;
+    }).join('')
+    : `<div class="analysis-mini">暂无Agent点评</div>`;
+
+  const issuesHtml = issues.length
+    ? `<ul class="analysis-list">${issues.map(x => `<li>${esc(String(x || '').replace(/^\s*[-•]\s*/, ''))}</li>`).join('')}</ul>`
+    : `<div class="analysis-mini">暂无结构性问题</div>`;
+
+  return `
+    <div class="analysis-section">
+      <div class="analysis-title">全局状态</div>
+      ${globalHtml}
+    </div>
+    <div class="analysis-section">
+      <div class="analysis-title">6个Agent逐个点评（点击展开/收起）</div>
+      ${reviewsHtml}
+    </div>
+    <div class="analysis-section">
+      <div class="analysis-title">结构性问题</div>
+      ${issuesHtml}
+    </div>
+  `;
+}
+
+function renderAccountAnalysis(state, payload, lastPush) {
+  const box = document.getElementById('accountAnalysis');
+  const meta = document.getElementById('accountAnalysisMeta');
+  if (!box || !meta) return;
+
+  const p = payload || {};
+  const pAnalysis = p?.analysis || {};
+  const hasStructured = Array.isArray(pAnalysis?.agentReviews) && pAnalysis.agentReviews.length > 0;
+  const hasPushText = typeof pAnalysis.text === 'string' && pAnalysis.text.trim().length > 0;
+  const fallbackText = buildFallbackAnalysisText(state, lastPush);
+
+  const payloadTs = p?.ts ? new Date(p.ts).toLocaleString() : '未生成';
+  const sourceTs = state?.generatedAt ? new Date(state.generatedAt).toLocaleString() : '-';
+  meta.textContent = hasStructured || hasPushText
+    ? `来源：push-brief.json @ ${payloadTs}（state=${sourceTs}）`
+    : `来源：state 实时计算（state=${sourceTs}）`;
+
+  if (hasStructured) {
+    box.innerHTML = renderStructuredAnalysis(pAnalysis);
+    return;
+  }
+
+  const text = hasPushText ? pAnalysis.text.trim() : fallbackText;
+  box.textContent = text || '暂无分析内容';
+}
+
+async function sendCommand(command, opts = {}){
+  const { showSuccess = false } = opts;
+  const out = document.getElementById('cmdResult');
+  out.textContent = `执行中: ${command} ...`;
+  try {
+    const res = await fetch('/api/command', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ command })
+    });
+    const data = await res.json();
+    const ok = res.ok && data?.ok !== false;
+    if (!ok) {
+      out.textContent = `命令执行失败: ${data?.message || data?.error || res.statusText || res.status}`;
+    } else if (showSuccess) {
+      out.textContent = `✅ ${data?.message || `${command} executed`}`;
+    } else {
+      out.textContent = '';
+    }
+    await load();
+  } catch (e) {
+    out.textContent = `命令执行失败: ${e.message || e}`;
+  }
+}
+
+document.getElementById('refresh').addEventListener('click', load);
+document.querySelectorAll('[data-cmd]').forEach(btn => {
+  btn.addEventListener('click', () => sendCommand(btn.getAttribute('data-cmd')));
+});
+document.getElementById('sendCmd').addEventListener('click', () => {
+  const v = (document.getElementById('cmdInput').value || '').trim();
+  if (!v) return;
+  sendCommand(v, { showSuccess: true });
+});
+document.getElementById('cmdInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const v = (document.getElementById('cmdInput').value || '').trim();
+    if (!v) return;
+    sendCommand(v, { showSuccess: true });
+  }
+});
+
+document.getElementById('okxProfile').addEventListener('change', async (e) => {
+  const v = e.target.value;
+  const logical = (v === 'live' || v === 'demo') ? v : (v || 'demo');
+  const data = await loadOkxAccount(logical, false, true);
+  if (window.__mode?.demo_trade) {
+    const agg = await loadOkxExecutionAggregate(window.__executionProfiles || [], false);
+    if (agg?.ok) {
+      const m = Math.max(0, Number(agg.summary?.equity || 0) - Number(agg.summary?.available || 0));
+      setAccountCards({
+        equity: Number(agg.summary?.equity || 0),
+        available: Number(agg.summary?.available || 0),
+        marginUsed: m,
+        pnl24h: Number(agg.summary?.pnl24h || 0)
+      }, `source: OKX demo aggregated (${agg.ready}/${agg.total})`);
+    } else if (data?.ok) {
+      const s = data.summary || {};
+      setAccountCards({
+        equity: Number(s.equity || 0),
+        available: Number(s.available || 0),
+        marginUsed: Math.max(0, Number(s.equity || 0) - Number(s.available || 0)),
+        pnl24h: Number(s.pnl24h || 0)
+      }, `source: OKX demo (${data.profileResolved || data.profile || 'demo'})`);
+    }
+  }
+});
+
+document.getElementById('okxRefresh').addEventListener('click', async () => {
+  const v = document.getElementById('okxProfile').value;
+  const logical = (v === 'live' || v === 'demo') ? v : (v || 'demo');
+  const data = await loadOkxAccount(logical, false, true);
+  if (window.__mode?.demo_trade) {
+    const agg = await loadOkxExecutionAggregate(window.__executionProfiles || [], false);
+    if (agg?.ok) {
+      const m = Math.max(0, Number(agg.summary?.equity || 0) - Number(agg.summary?.available || 0));
+      setAccountCards({
+        equity: Number(agg.summary?.equity || 0),
+        available: Number(agg.summary?.available || 0),
+        marginUsed: m,
+        pnl24h: Number(agg.summary?.pnl24h || 0)
+      }, `source: OKX demo aggregated (${agg.ready}/${agg.total})`);
+    } else if (data?.ok) {
+      const s = data.summary || {};
+      setAccountCards({
+        equity: Number(s.equity || 0),
+        available: Number(s.available || 0),
+        marginUsed: Math.max(0, Number(s.equity || 0) - Number(s.available || 0)),
+        pnl24h: Number(s.pnl24h || 0)
+      }, `source: OKX demo (${data.profileResolved || data.profile || 'demo'})`);
+    }
+  }
+});
+
+initTabs();
+load();
+</script>
+</body>
+</html>

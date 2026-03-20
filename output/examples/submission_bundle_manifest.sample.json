@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-03-20T10:51:09.495Z",
+  "note": "sanitized sample manifest",
+  "files": [
+    {
+      "path": "unknown",
+      "size": null,
+      "sha256": null
+    },
+    {
+      "path": "unknown",
+      "size": null,
+      "sha256": null
+    },
+    {
+      "path": "unknown",
+      "size": null,
+      "sha256": null
+    },
+    {
+      "path": "unknown",
+      "size": null,
+      "sha256": null
+    }
+  ]
+}

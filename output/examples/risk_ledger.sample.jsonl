@@ -1,0 +1,15 @@
+{"ts":"2026-03-18T15:50:36.681Z","level":"RED","type":"KILL_SWITCH","text":"A6 自动触发已执行（profiles=5，冷却至 2026-03-18T16:50:36.680Z）"}
+{"ts":"2026-03-18T15:50:04.239Z","level":"RED","type":"A6_ALERT","text":"触发 Kill Switch 条件：停新单→撤挂单→reduceOnly"}
+{"ts":"2026-03-18T15:20:25.474Z","level":"WARN","type":"KILL_SWITCH","text":"A6 红警命中但仍在冷却期，跳过重复触发（until=2026-03-18T15:31:25.890Z）"}
+{"ts":"2026-03-18T15:20:25.474Z","level":"RED","type":"A6_ALERT","text":"触发 Kill Switch 条件：停新单→撤挂单→reduceOnly"}
+{"ts":"2026-03-18T14:51:02.637Z","level":"WARN","type":"KILL_SWITCH","text":"A6 红警命中但仍在冷却期，跳过重复触发（until=2026-03-18T15:31:25.890Z）"}
+{"ts":"2026-03-18T14:51:02.637Z","level":"RED","type":"A6_ALERT","text":"触发 Kill Switch 条件：停新单→撤挂单→reduceOnly"}
+{"ts":"2026-03-18T14:50:40.776Z","level":"WARN","type":"KILL_SWITCH","text":"A6 红警命中但仍在冷却期，跳过重复触发（until=2026-03-18T15:31:25.890Z）"}
+{"ts":"2026-03-18T14:50:40.776Z","level":"RED","type":"A6_ALERT","text":"触发 Kill Switch 条件：停新单→撤挂单→reduceOnly"}
+{"ts":"2026-03-18T14:50:06.916Z","level":"WARN","type":"KILL_SWITCH","text":"A6 红警命中但仍在冷却期，跳过重复触发（until=2026-03-18T15:31:25.890Z）"}
+{"ts":"2026-03-18T14:50:06.916Z","level":"RED","type":"A6_ALERT","text":"触发 Kill Switch 条件：停新单→撤挂单→reduceOnly"}
+{"ts":"2026-03-18T14:48:55.938Z","level":"WARN","type":"KILL_SWITCH","text":"A6 红警命中但仍在冷却期，跳过重复触发（until=2026-03-18T15:31:25.890Z）"}
+{"ts":"2026-03-18T14:48:55.937Z","level":"RED","type":"A6_ALERT","text":"触发 Kill Switch 条件：停新单→撤挂单→reduceOnly"}
+{"ts":"2026-03-18T14:31:25.891Z","level":"RED","type":"KILL_SWITCH","text":"A6 自动触发已执行（profiles=0，冷却至 2026-03-18T15:31:25.890Z）"}
+{"ts":"2026-03-18T14:31:25.890Z","level":"RED","type":"A6_ALERT","text":"触发 Kill Switch 条件：停新单→撤挂单→reduceOnly"}
+{"ts":"2026-03-17T16:59:10.909Z","level":"RED","type":"A6_ALERT","text":"30分钟触发3次，执行Kill Switch：停新单→撤挂单→reduceOnly"}

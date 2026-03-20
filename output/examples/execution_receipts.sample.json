@@ -1,0 +1,97 @@
+{
+  "ts": "2026-03-19T16:34:03.246Z",
+  "summary": {
+    "ts": "2026-03-19T16:34:03.245Z",
+    "epoch": 1,
+    "total": 1,
+    "dryRun": 1,
+    "accepted": 0,
+    "rejected": 0,
+    "blocked": 0,
+    "skipped": 5,
+    "hardViolations": 0,
+    "enableWrite": false,
+    "writeEnableSource": "control-runtime",
+    "writeActive": false,
+    "paused": false,
+    "armRequired": false,
+    "armActive": true,
+    "writeArmUntil": "2026-03-19T17:52:47.029Z",
+    "demoWindow": {
+      "enabled": true,
+      "active": true,
+      "window": "09:00-23:00",
+      "now": "09:34"
+    },
+    "demoRoundCap": 2,
+    "demoWriteCount": 0,
+    "riskLevel": "GREEN",
+    "riskQtyMultiplier": 1,
+    "estTotalCostUsd": 0.6919,
+    "placementOrders": 0,
+    "placementAttempts": 0,
+    "retries": 0,
+    "rejectRate": 0,
+    "timeoutRate": 0,
+    "retryRecoveryRate": 0,
+    "avgLatencyMs": 0,
+    "p95LatencyMs": 0
+  },
+  "receipts": [
+    {
+      "ts": "2026-03-19T16:34:03.245Z",
+      "epoch": 1,
+      "agentId": "A5",
+      "profile": "okx-***o-5",
+      "instId": "ETH-USDT",
+      "side": "sell",
+      "qty": 0.308,
+      "signal": -0.05,
+      "expectedEdgeBps": 50,
+      "status": "dry-run",
+      "attempts": 0,
+      "latencyMs": 0,
+      "reason": "control.writeEnabled=false",
+      "clOrdId": "shp_***fb1"
+    }
+  ],
+  "skipped": [
+    {
+      "agentId": "A1",
+      "reason": "signal-below-threshold",
+      "signal": -0.033,
+      "threshold": 0.056,
+      "regime": "High-Vol",
+      "fit": "Range"
+    },
+    {
+      "agentId": "A2",
+      "reason": "not-exec"
+    },
+    {
+      "agentId": "A3",
+      "reason": "signal-below-threshold",
+      "signal": -0.033,
+      "threshold": 0.056,
+      "regime": "High-Vol",
+      "fit": "Range"
+    },
+    {
+      "agentId": "A4",
+      "reason": "signal-below-threshold",
+      "signal": -0.002,
+      "threshold": 0.056,
+      "regime": "High-Vol",
+      "fit": "Trend"
+    },
+    {
+      "agentId": "A6",
+      "reason": "signal-below-threshold",
+      "signal": -0.033,
+      "threshold": 0.05,
+      "regime": "High-Vol",
+      "fit": "All"
+    }
+  ],
+  "attribution": []
+}

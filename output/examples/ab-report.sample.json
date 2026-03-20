@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-03-20T09:52:48.105Z",
+  "baseline": {
+    "decisionAlphaAvg": -0.0117,
+    "maxDrawdownPct": 0.38,
+    "halts": 0
+  },
+  "variant": {
+    "decisionAlphaAvg": -0.0028,
+    "maxDrawdownPct": 0.24,
+    "halts": 0
+  },
+  "gates": {
+    "sampleOk": true,
+    "minSamplesPerWindow": 6,
+    "sampleGap": {
+      "decisionAlphaBaseline": 0,
+      "decisionAlphaVariant": 0,
+      "equityBaseline": 0,
+      "equityVariant": 0
+    },
+    "status": "EVALUATED",
+    "decisionAlphaBetter": true,
+    "drawdownBetter": true,
+    "haltBetter": true,
+    "drawdownDropPct": 36.84,
+    "haltsDropPct": 0,
+    "pass": true
+  },
+  "longWindow": {
+    "windowDays": 21,
+    "segmentDays": 7,
+    "windows": [
+      {
+        "start": "2026-02-27T09:52:48.104Z",
+        "end": "2026-03-06T09:52:48.104Z",
+        "decisionAlphaAvg": 0,
+        "maxDrawdownPct": 0,
+        "halts": 0,
+        "sampleSizes": {
+          "decisionAlpha": 0,
+          "equity": 0
+        }
+      },
+      {
+        "start": "2026-03-06T09:52:48.104Z",
+        "end": "2026-03-13T09:52:48.104Z",
+        "decisionAlphaAvg": 0,
+        "maxDrawdownPct": 0,
+        "halts": 0,
+        "sampleSizes": {
+          "decisionAlpha": 0,
+          "equity": 0
+        }
+      },
+      {
+        "start": "2026-03-13T09:52:48.104Z",
+        "end": "2026-03-20T09:52:48.104Z",
+        "decisionAlphaAvg": -0.0069,
+        "maxDrawdownPct": 0.66,
+        "halts": 15,
+        "sampleSizes": {
+          "decisionAlpha": 41,
+          "equity": 49
+        }
+      }
+    ],
+    "latest": {
+      "start": "2026-03-13T09:52:48.104Z",
+      "end": "2026-03-20T09:52:48.104Z",
+      "decisionAlphaAvg": -0.0069,
+      "maxDrawdownPct": 0.66,
+      "halts": 15,
+      "sampleSizes": {
+        "decisionAlpha": 41,
+        "equity": 49
+      }
+    },
+    "previous": {
+      "start": "2026-03-06T09:52:48.104Z",
+      "end": "2026-03-13T09:52:48.104Z",
+      "decisionAlphaAvg": 0,
+      "maxDrawdownPct": 0,
+      "halts": 0,
+      "sampleSizes": {
+        "decisionAlpha": 0,
+        "equity": 0
+      }
+    },
+    "delta": {
+      "decisionAlpha": -0.0069,
+      "maxDrawdownPct": -0.66,
+      "halts": -15
+    },
+    "better": {
+      "decisionAlpha": false,
+      "maxDrawdown": false,
+      "halts": false
+    },
+    "betterAll": false
+  }
+}
